@@ -22,10 +22,12 @@ const animation3 = new Animation(128 / 2, 128 / 2, 128, 128, "res/sword_attack.p
 const animation4 = new Animation(256 / 2, 512 / 2, 256, 512, "res/fire_burn.png");
 const animation6 = new Animation(128, 256, 128, 256, "res/fire_burn2.png");
 const animation7 = new Animation(144, 192, 144, 192, "res/ice_attack.png");
-const animation8 = new Animation(64, 104, 64, 110, "res/person_move.png")
-    .onLoaded(() => animation8.setFrameRange(1, 1 + 6));
-const animation9 = new Animation(64, 104, 64, 110, "res/person_move.png")
-    .onLoaded(() => animation9.setFrameRange(8, 8 + 6));
+const animation8 = new Animation(64, 104, 64, 110, "res/person_move.png");
+const onLoopEnd = [
+    () => animation8.setFrameRange(1, 1 + 6).loop(3).onLoopEnded(() => onLoopEnd[1]()),
+    () => animation8.setFrameRange(8, 8 + 6).loop(3).onLoopEnded(() => onLoopEnd[0]())
+];
+animation8.onLoaded(() => onLoopEnd[0]());
 
 const render = () => {
     pen.fillStyle = "#000";
@@ -38,7 +40,6 @@ const render = () => {
     animation6.play(pen, 128, 0);
     animation7.play(pen, 128, 256);
     animation8.play(pen, 256, 0);
-    animation9.play(pen, 256, 104);
     
     requestAnimationFrame(render);
 };

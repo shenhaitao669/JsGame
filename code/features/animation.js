@@ -5,17 +5,29 @@ const Animation = function(width, height, resFrameWidth, resFrameHeight, ...reso
         frameStart: 0,
         frameEnd: 0,
         frameDuration: 1000,
-        frameLoop: true,
         frameIdx: 0,
         frameTimestamp: 0,
         frameWidth: width,
         frameHeight: height,
-        onLoaded: null
+        frameLoop: -1,
+        onLoaded: () => {},
+        onEnded: () => {},
+        onLoopEndend: () => {}
     };
 
     const obj = {
         onLoaded(callback) {
             objAttr.onLoaded = callback;
+            return this;
+        },
+
+        onEnded(callback) {
+            objAttr.onEnded = callback;
+            return this;
+        },
+
+        onLoopEnded(callback) {
+            objAttr.onLoopEndend = callback;
             return this;
         },
 
@@ -44,12 +56,16 @@ const Animation = function(width, height, resFrameWidth, resFrameHeight, ...reso
             return this;
         },
 
-        isLoop() {
-            return objAttr.isLoop;
+        loop(loopCount = -1) {
+            objAttr.frameLoop = loopCount;
+            objAttr.frameIdx = objAttr.frameStart;
+            objAttr.frameTimestamp = 0;
+            return this;
         },
-        
-        loop(isLoop) {
-            objAttr.isLoop = isLoop;
+
+        reset() {
+            objAttr.frameIdx = objAttr.frameStart;
+            objAttr.frameTimestamp = 0;
             return this;
         },
 
@@ -58,14 +74,31 @@ const Animation = function(width, height, resFrameWidth, resFrameHeight, ...reso
                 return;
             }
 
-            const date = new Date();
-            if ((date.getTime() - objAttr.frameTimestamp) > (objAttr.frameDuration / (objAttr.frameEnd - objAttr.frameStart))) {
-                if (objAttr.frameTimestamp > 0) {
-                    if (++objAttr.frameIdx >= objAttr.frameEnd) {
-                        objAttr.frameIdx = objAttr.frameStart;
+            if (objAttr.frameLoop != 0) {
+                const date = new Date();
+                if ((date.getTime() - objAttr.frameTimestamp) > (objAttr.frameDuration / (objAttr.frameEnd - objAttr.frameStart))) {
+                    if (objAttr.frameTimestamp > 0) {
+                        if (++objAttr.frameIdx >= objAttr.frameEnd) {
+                            if (objAttr.frameLoop > 0) {
+                                objAttr.frameLoop--;
+                            }
+
+                            objAttr.onEnded();
+                            if (objAttr.frameLoop == 0) {
+                                objAttr.frameIdx = objAttr.frameEnd - 1;
+                                objAttr.frameTimestamp = 0;
+                                objAttr.onLoopEndend();
+                            } else {
+                                objAttr.frameIdx = objAttr.frameStart;
+                                objAttr.frameTimestamp = date.getTime();
+                            }
+                        } else {
+                            objAttr.frameTimestamp = date.getTime();
+                        }
+                    } else {
+                        objAttr.frameTimestamp = date.getTime();
                     }
                 }
-                objAttr.frameTimestamp = date.getTime();
             }
 
             pen.drawImage(objAttr.frameBuffer, objAttr.frameIdx * objAttr.frameWidth, 0, objAttr.frameWidth, objAttr.frameHeight,
