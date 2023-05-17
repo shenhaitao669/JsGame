@@ -24,8 +24,8 @@ const animation6 = new Animation(128, 256, 128, 256, "res/fire_burn2.png");
 const animation7 = new Animation(144, 192, 144, 192, "res/ice_attack.png");
 const animation8 = new Animation(64, 104, 64, 110, "res/person_move.png");
 const onLoopEnd = [
-    () => animation8.setFrameRange(1, 1 + 6).loop(3).onLoopEnded(() => onLoopEnd[1]()),
-    () => animation8.setFrameRange(8, 8 + 6).loop(3).onLoopEnded(() => onLoopEnd[0]())
+    () => animation8.setFrameRange(1, 1 + 6).loop(parseInt(Math.random() * 10) + 1).onLoopEnded(() => onLoopEnd[1]()),
+    () => animation8.setFrameRange(8, 8 + 6).loop(parseInt(Math.random() * 10) + 1).onLoopEnded(() => onLoopEnd[0]())
 ];
 animation8.onLoaded(() => onLoopEnd[0]());
 
