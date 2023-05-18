@@ -4,16 +4,18 @@
             document, html, body {
                 margin: 0px;
                 padding: 0px;
+                width:100%;
+                height:100%;
+                background-color: black;
             }
             
             canvas{
-                width:100%;
-                height:100%;
+                margin-left:calc(50% - 400px);
             }
         </style>
     </head>
     <body>
-        <canvas id="surface" width="800" height="600" style="width:100%;height:100%"></canvas>
+        <canvas id="surface" width="800" height="600"></canvas>
     </body>
     <script type="text/javascript" src="code/features/animation.js"></script>
     <script type="text/javascript" src="code/features/spirite.js"></script>
